@@ -51,6 +51,7 @@ const statusLabels = {
 const weekdayLabels = ['日', '月', '火', '水', '木', '金', '土'];
 
 let state = loadBoardState();
+let isMenuOpen = false;
 
 function todayString() {
   return new Intl.DateTimeFormat('sv-SE', {
@@ -332,7 +333,10 @@ function render() {
           <p class="eyebrow">Baseball dispatch board</p>
           <h1>${state.screen === 'players' ? '選手マスタ管理' : '配車調整ボード'}</h1>
         </div>
-        <div class="header-actions">
+        <button class="menu-toggle" type="button" data-action="toggle-menu" aria-label="メニューを開く" aria-expanded="${isMenuOpen}">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="header-actions ${isMenuOpen ? 'open' : ''}">
           <button class="ghost-button" type="button" data-action="show-dispatch">配車画面</button>
           <button class="ghost-button" type="button" data-action="show-players">選手管理</button>
           <button class="ghost-button" type="button" data-action="reset">全データ初期化</button>
@@ -531,8 +535,18 @@ function playerRow(player) {
 }
 
 function bindEvents() {
-  document.querySelector('[data-action="show-dispatch"]').addEventListener('click', () => setState({ ...state, screen: 'dispatch' }));
-  document.querySelector('[data-action="show-players"]').addEventListener('click', () => setState({ ...state, screen: 'players' }));
+  document.querySelector('[data-action="toggle-menu"]').addEventListener('click', () => {
+    isMenuOpen = !isMenuOpen;
+    render();
+  });
+  document.querySelector('[data-action="show-dispatch"]').addEventListener('click', () => {
+    isMenuOpen = false;
+    setState({ ...state, screen: 'dispatch' });
+  });
+  document.querySelector('[data-action="show-players"]').addEventListener('click', () => {
+    isMenuOpen = false;
+    setState({ ...state, screen: 'players' });
+  });
 
   if (state.screen === 'players') {
     bindPlayerMasterEvents();
@@ -617,6 +631,7 @@ function bindPlayerMasterEvents() {
 
 function bindGlobalEvents() {
   document.querySelector('[data-action="reset"]').addEventListener('click', () => {
+    isMenuOpen = false;
     if (!window.confirm('全日付の配車データと選手管理を初期化しますか？')) return;
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem('baseball-dispatch-board:v1');

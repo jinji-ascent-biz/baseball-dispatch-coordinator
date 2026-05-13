@@ -82,6 +82,23 @@ label span {
   gap: 8px;
 }
 
+.menu-toggle {
+  display: none;
+  width: 44px;
+  min-height: 44px;
+  border: 1px solid #c9d6d2;
+  background: #ffffff;
+  padding: 10px;
+}
+
+.menu-toggle span {
+  display: block;
+  height: 2px;
+  margin: 5px 0;
+  border-radius: 999px;
+  background: #1f2933;
+}
+
 .eyebrow {
   margin: 0 0 6px;
   color: #126a5a;
@@ -405,14 +422,35 @@ h2 {
   }
 
   .app-header,
-  .header-actions,
   .section-heading {
     display: grid;
   }
 
   .app-header {
+    grid-template-columns: 1fr auto;
+    align-items: start;
     gap: 10px;
     margin-bottom: 12px;
+    position: relative;
+  }
+
+  .menu-toggle {
+    display: inline-block;
+  }
+
+  .header-actions {
+    display: none;
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #d9e3df;
+    border-radius: 8px;
+    background: #ffffff;
+  }
+
+  .header-actions.open {
+    display: grid;
   }
 
   h1 {
