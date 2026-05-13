@@ -400,8 +400,8 @@ h2 {
 
 @media (max-width: 640px) {
   .app-shell {
-    width: min(100% - 20px, 1180px);
-    padding-top: 18px;
+    width: min(100% - 16px, 1180px);
+    padding-top: 14px;
   }
 
   .app-header,
@@ -410,24 +410,146 @@ h2 {
     display: grid;
   }
 
+  .app-header {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
   .calendar-toolbar,
   .event-panel,
-  .top-row,
-  .bottom-row,
   .roster-toolbar,
-  .admin-player-row,
-  .player-row {
+  .admin-player-row {
     grid-template-columns: 1fr;
   }
 
+  .calendar-panel,
+  .event-panel,
+  .summary-panel,
+  .roster-admin,
+  .player-list {
+    margin-top: 10px;
+  }
+
+  .calendar-panel,
+  .event-panel,
+  .summary-panel,
+  .roster-admin {
+    padding: 10px;
+  }
+
+  .calendar-toolbar {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+
   .calendar-day {
-    min-height: 36px;
+    min-height: 32px;
     padding: 0;
+    border-radius: 5px;
+  }
+
+  .top-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .bottom-row {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .summary-panel,
+  .summary-row {
+    gap: 6px;
   }
 
   .summary-status,
   .summary-metric {
-    min-height: 72px;
+    min-height: 54px;
+    padding: 8px 6px;
+  }
+
+  .summary-status span,
+  .summary-metric span {
+    font-size: 0.66rem;
+    line-height: 1.15;
+  }
+
+  .summary-status strong,
+  .summary-metric strong {
+    margin-top: 5px;
+    font-size: 1.25rem;
+  }
+
+  .player-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .player-name,
+  .segmented-control,
+  .note-field {
+    grid-column: 1 / -1;
+  }
+
+  .player-name {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .player-name span {
+    margin-top: 0;
+    white-space: nowrap;
+  }
+
+  .segmented-control {
+    gap: 3px;
+    padding: 3px;
+  }
+
+  .segmented-control button {
+    min-height: 32px;
+    font-size: 0.82rem;
+  }
+
+  .toggle-field {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 3px;
+    min-height: 58px;
+    border: 1px solid #c9d6d2;
+    border-radius: 6px;
+    background: #ffffff;
+  }
+
+  .toggle-field span {
+    font-size: 0.72rem;
+  }
+
+  .note-field span,
+  .number-field span {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 0.68rem;
+  }
+
+  .number-field input {
+    padding: 8px 6px;
+    text-align: center;
+  }
+
+  .note-field input {
+    padding: 8px 10px;
   }
 
   .roster-toolbar {
