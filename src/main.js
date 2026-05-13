@@ -37,9 +37,9 @@ const seedParticipation = {
 };
 
 const participationLabels = {
-  unknown: '未定',
-  yes: '参加',
+  yes: '出席',
   no: '欠席',
+  unknown: '未定',
 };
 
 const statusLabels = {
