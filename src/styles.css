@@ -1,0 +1,793 @@
+:root {
+  color: #1f2933;
+  background: #f4f7f6;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 6px;
+  background: #126a5a;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 1px solid #c9d6d2;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1f2933;
+  padding: 10px 12px;
+}
+
+textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+label span {
+  display: block;
+  margin-bottom: 6px;
+  color: #52645f;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.app-shell {
+  width: min(1180px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 28px 0 44px;
+}
+
+.app-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.menu-toggle {
+  display: none;
+  width: 44px;
+  min-height: 44px;
+  border: 1px solid #c9d6d2;
+  background: #ffffff;
+  padding: 10px;
+}
+
+.menu-toggle span {
+  display: block;
+  height: 2px;
+  margin: 5px 0;
+  border-radius: 999px;
+  background: #1f2933;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #126a5a;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: 0;
+  color: #17211f;
+  letter-spacing: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 6vw, 3.7rem);
+  line-height: 1;
+}
+
+h2 {
+  font-size: 1.08rem;
+}
+
+.ghost-button {
+  border: 1px solid #c9d6d2;
+  background: #ffffff;
+  color: #1f2933;
+  padding: 0 18px;
+}
+
+.calendar-panel,
+.event-panel,
+.roster-admin,
+.player-list {
+  margin-top: 16px;
+  border: 1px solid #d9e3df;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.calendar-panel {
+  padding: 16px;
+}
+
+.calendar-toolbar {
+  display: grid;
+  grid-template-columns: 96px minmax(160px, 1fr) 96px;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-weekdays {
+  margin-bottom: 6px;
+  color: #52645f;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.calendar-day {
+  min-height: 42px;
+  border: 1px solid #d9e3df;
+  background: #ffffff;
+  color: #1f2933;
+  font-weight: 800;
+}
+
+.calendar-day.empty {
+  border: 0;
+  background: transparent;
+}
+
+.calendar-day.has-data {
+  border-color: #126a5a;
+}
+
+.calendar-day.selected {
+  background: #126a5a;
+  color: #ffffff;
+}
+
+.event-panel {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr);
+  gap: 14px;
+  padding: 16px;
+}
+
+.event-panel > .date-expedition-field {
+  grid-column: 1 / -1;
+}
+
+.summary-panel {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+  border-radius: 8px;
+  padding: 16px;
+  color: #17211f;
+}
+
+.summary-row {
+  display: grid;
+  gap: 12px;
+}
+
+.top-row {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.bottom-row {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.summary-panel.shortage {
+  background: #ffe8e5;
+  border: 1px solid #f2aaa3;
+}
+
+.summary-panel.exact {
+  background: #e7f7ef;
+  border: 1px solid #9ed7b9;
+}
+
+.summary-panel.surplus {
+  background: #e7f1fb;
+  border: 1px solid #9fc3e4;
+}
+
+.summary-status,
+.summary-metric {
+  min-height: 84px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 14px;
+}
+
+.summary-status span,
+.summary-metric span {
+  display: block;
+  color: #52645f;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.summary-status strong,
+.summary-metric strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.roster-admin {
+  padding: 16px;
+}
+
+.master-screen {
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section-heading p {
+  margin: 6px 0 0;
+  color: #52645f;
+}
+
+.roster-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 160px 112px;
+  gap: 12px;
+  align-items: end;
+  margin-top: 16px;
+}
+
+.admin-player-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.admin-player-row {
+  display: grid;
+  grid-template-columns: 1fr 160px 92px;
+  gap: 10px;
+  align-items: center;
+}
+
+.danger-button {
+  background: #b42318;
+}
+
+.player-list {
+  overflow: hidden;
+}
+
+.desktop-header,
+.player-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(210px, 1.2fr) 86px 104px 86px 86px minmax(150px, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.desktop-header {
+  padding: 12px 16px;
+  background: #eef4f1;
+  color: #52645f;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.player-row {
+  padding: 14px 16px;
+  border-top: 1px solid #e5ece9;
+}
+
+.player-name strong,
+.player-name span {
+  display: block;
+}
+
+.player-name span {
+  margin-top: 4px;
+  color: #667873;
+  font-size: 0.86rem;
+}
+
+.segmented-control {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  border-radius: 6px;
+  background: #eef4f1;
+  padding: 4px;
+}
+
+.segmented-control button {
+  min-height: 36px;
+  background: transparent;
+  color: #52645f;
+  font-size: 0.9rem;
+}
+
+.segmented-control button.selected {
+  background: #126a5a;
+  color: #ffffff;
+}
+
+.number-field input {
+  text-align: right;
+}
+
+.toggle-field {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+}
+
+.toggle-field input {
+  width: 20px;
+  height: 20px;
+}
+
+.toggle-field span {
+  margin: 0;
+  color: #1f2933;
+  font-size: 0.95rem;
+}
+
+.note-field span,
+.number-field span {
+  display: none;
+}
+
+@media (max-width: 920px) {
+  .top-row,
+  .bottom-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .desktop-header {
+    display: none;
+  }
+
+  .player-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .player-name,
+  .segmented-control,
+  .note-field {
+    grid-column: 1 / -1;
+  }
+
+  .note-field span,
+  .number-field span {
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    width: min(100% - 16px, 1180px);
+    padding-top: 14px;
+  }
+
+  .app-header,
+  .section-heading {
+    display: grid;
+  }
+
+  .app-header {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 10px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .menu-toggle {
+    display: inline-block;
+  }
+
+  .header-actions {
+    display: none;
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #d9e3df;
+    border-radius: 8px;
+    background: #ffffff;
+  }
+
+  .header-actions.open {
+    display: grid;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
+  .calendar-toolbar,
+  .roster-toolbar,
+  .admin-player-row {
+    grid-template-columns: 1fr;
+  }
+
+  .event-panel {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .calendar-panel,
+  .event-panel,
+  .summary-panel,
+  .roster-admin,
+  .player-list {
+    margin-top: 10px;
+  }
+
+  .event-panel {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .calendar-panel,
+  .event-panel,
+  .summary-panel,
+  .roster-admin {
+    padding: 10px;
+  }
+
+  .calendar-toolbar {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+
+  .calendar-day {
+    min-height: 32px;
+    padding: 0;
+    border-radius: 5px;
+  }
+
+  .top-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .bottom-row {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .summary-panel,
+  .summary-row {
+    gap: 6px;
+  }
+
+  .summary-status,
+  .summary-metric {
+    min-height: 54px;
+    padding: 8px 6px;
+  }
+
+  .summary-status span,
+  .summary-metric span {
+    font-size: 0.66rem;
+    line-height: 1.15;
+  }
+
+  .summary-status strong,
+  .summary-metric strong {
+    margin-top: 5px;
+    font-size: 1.25rem;
+  }
+
+  .player-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .player-name,
+  .segmented-control,
+  .note-field {
+    grid-column: 1 / -1;
+  }
+
+  .player-name {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .player-name span {
+    margin-top: 0;
+    white-space: nowrap;
+  }
+
+  .segmented-control {
+    gap: 3px;
+    padding: 3px;
+  }
+
+  .segmented-control button {
+    min-height: 32px;
+    font-size: 0.82rem;
+  }
+
+  .toggle-field {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 3px;
+    min-height: 58px;
+    border: 1px solid #c9d6d2;
+    border-radius: 6px;
+    background: #ffffff;
+  }
+
+  .toggle-field span {
+    font-size: 0.72rem;
+  }
+
+  .note-field span,
+  .number-field span {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 0.68rem;
+  }
+
+  .number-field input {
+    padding: 8px 6px;
+    text-align: center;
+  }
+
+  .note-field input {
+    padding: 8px 10px;
+  }
+
+  .roster-toolbar {
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 640px) {
+  .player-list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+
+  .player-list::before {
+    content: "横にスクロールできます →";
+    display: block;
+    padding: 8px 10px 0;
+    color: #667873;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .player-row {
+    min-width: 780px;
+    grid-template-columns: 132px 240px 76px 82px 76px 76px 210px;
+    grid-template-rows: auto auto;
+    align-items: end;
+    gap: 8px;
+  }
+
+  .player-name {
+    grid-column: 1;
+    grid-row: 1;
+    display: block;
+    align-self: center;
+  }
+
+  .player-name strong {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .player-name span {
+    margin-top: 3px;
+    font-size: 0.72rem;
+  }
+
+  .segmented-control {
+    grid-column: 2 / 5;
+    grid-row: 1;
+    align-self: center;
+  }
+
+  .number-field,
+  .toggle-field {
+    grid-row: 2;
+  }
+
+  .number-field input {
+    min-height: 38px;
+  }
+
+  .toggle-field {
+    min-height: 54px;
+  }
+
+  .note-field {
+    grid-column: 7;
+    grid-row: 1 / 3;
+    align-self: end;
+  }
+
+  .note-field input {
+    min-height: 40px;
+  }
+}
+
+.date-expedition-field {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1fr);
+  gap: 12px;
+  align-items: end;
+  grid-column: 1 / -1;
+}
+
+.expedition-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid #f2aaa3;
+  border-radius: 6px;
+  background: #fff5f3;
+  color: #b42318;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.expedition-check input {
+  width: 20px;
+  height: 20px;
+}
+
+.expedition-check span {
+  margin: 0;
+  color: #b42318;
+}
+
+.calendar-day.expedition-day {
+  border: 2px solid #d92d20;
+  background: #fff5f3;
+  color: #b42318;
+}
+
+.calendar-day.expedition-day.selected {
+  background: #d92d20;
+  color: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .date-expedition-field {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .expedition-check {
+    min-height: 40px;
+    padding: 0 10px;
+  }
+}
+
+.summary-panel.expedition-summary {
+  border: 2px solid #d92d20;
+  background: #fff3e8;
+}
+
+.summary-panel.expedition-summary .summary-metric strong,
+.summary-panel.expedition-summary .summary-status strong {
+  color: #b42318;
+}
+
+.summary-panel.expedition-summary .summary-metric,
+.summary-panel.expedition-summary .summary-status {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+
+@media (max-width: 640px) {
+  .player-row {
+    min-width: 640px;
+    grid-template-columns: 118px 222px 64px 70px 64px 64px 96px;
+    gap: 6px;
+    align-items: stretch;
+  }
+
+  .segmented-control {
+    grid-column: 2 / 4;
+  }
+
+  .note-field {
+    grid-column: 7;
+    grid-row: 1 / 3;
+    align-self: stretch;
+  }
+
+  .note-field input {
+    height: 100%;
+    min-height: 86px;
+    padding: 10px 8px;
+  }
+
+  .player-list::before {
+    padding-top: 6px;
+  }
+}
+
+
+.date-expedition-field > label {
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .date-expedition-field {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+  }
+
+  .date-expedition-field > label {
+    grid-column: auto;
+  }
+}
