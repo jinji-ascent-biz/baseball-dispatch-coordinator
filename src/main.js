@@ -44,8 +44,8 @@ const participationLabels = {
 
 const statusLabels = {
   shortage: '不足',
-  exact: 'ちょうど',
-  surplus: '余裕あり',
+  exact: 'OK',
+  surplus: 'OK',
 };
 
 const weekdayLabels = ['日', '月', '火', '水', '木', '金', '土'];
@@ -370,7 +370,7 @@ function dispatchScreenHtml(event, summary) {
         ${textField('event-venue', '会場', event.venue)}
       </section>
 
-      <section class="summary-panel ${summary.status}" aria-live="polite">
+      <section class="summary-panel ${summary.status} ${event.isExpedition ? 'expedition-summary' : ''}" aria-live="polite">
         <div class="summary-row top-row">
           ${summaryMetric('参加選手', 'participatingPlayers', summary.participatingPlayers)}
           ${summaryMetric('欠席選手', 'absentPlayers', summary.absentPlayers)}
@@ -382,8 +382,8 @@ function dispatchScreenHtml(event, summary) {
           ${summaryMetric('乗車予定人数', 'requiredRiders', summary.requiredRiders)}
           ${summaryMetric('乗車可人数', 'availableSeats', summary.availableSeats)}
           <div class="summary-status">
-            <span data-summary="status-label">過不足: ${statusLabels[summary.status]}</span>
-            <strong data-summary="balance">${summary.balance > 0 ? `+${summary.balance}` : summary.balance}</strong>
+            <span>過不足</span>
+            <strong data-summary="status-label">${statusLabels[summary.status]}</strong>
           </div>
         </div>
       </section>
@@ -471,7 +471,7 @@ function textField(field, label, value, type = 'text', placeholder = '') {
 
 function summaryMetric(label, key, value) {
   return `
-    <div class="summary-metric ${key}-metric ${key === 'carCount' && currentEvent().isExpedition ? 'expedition-required' : ''}">
+    <div class="summary-metric ${key}-metric">
       <span>${label}</span>
       <strong data-summary="${key}">${value}</strong>
     </div>
@@ -485,8 +485,7 @@ function refreshSummary() {
 
   panel.classList.remove('shortage', 'exact', 'surplus');
   panel.classList.add(summary.status);
-  setSummaryText('status-label', `過不足: ${statusLabels[summary.status]}`);
-  setSummaryText('balance', summary.balance > 0 ? `+${summary.balance}` : summary.balance);
+  setSummaryText('status-label', statusLabels[summary.status]);
   setSummaryText('participatingPlayers', summary.participatingPlayers);
   setSummaryText('absentPlayers', summary.absentPlayers);
   setSummaryText('undecidedPlayers', summary.undecidedPlayers);
