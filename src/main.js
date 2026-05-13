@@ -363,8 +363,8 @@ function dispatchScreenHtml(event, summary) {
       </section>
 
       <section class="event-panel" aria-label="イベント情報">
-        ${textField('event-title', 'イベント名', event.title)}
         ${textField('event-date', '選択日', state.selectedDate, 'date')}
+        ${textField('event-title', 'イベント名', event.title)}
         ${textField('event-venue', '会場', event.venue)}
       </section>
 

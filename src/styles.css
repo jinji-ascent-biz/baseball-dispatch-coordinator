@@ -191,9 +191,13 @@ h2 {
 
 .event-panel {
   display: grid;
-  grid-template-columns: minmax(220px, 1.5fr) minmax(160px, 0.8fr) minmax(180px, 1fr);
+  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr);
   gap: 14px;
   padding: 16px;
+}
+
+.event-panel label:first-child {
+  grid-column: 1 / -1;
 }
 
 .summary-panel {
@@ -389,7 +393,6 @@ h2 {
 }
 
 @media (max-width: 920px) {
-  .event-panel,
   .top-row,
   .bottom-row {
     grid-template-columns: 1fr 1fr;
@@ -458,10 +461,13 @@ h2 {
   }
 
   .calendar-toolbar,
-  .event-panel,
   .roster-toolbar,
   .admin-player-row {
     grid-template-columns: 1fr;
+  }
+
+  .event-panel {
+    grid-template-columns: 1fr 1fr;
   }
 
   .calendar-panel,
@@ -470,6 +476,10 @@ h2 {
   .roster-admin,
   .player-list {
     margin-top: 10px;
+  }
+
+  .event-panel {
+    grid-template-columns: 1fr 1fr;
   }
 
   .calendar-panel,
