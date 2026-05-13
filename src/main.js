@@ -448,13 +448,13 @@ function calendarDaysHtml() {
 function dateExpeditionField(event) {
   return `
     <div class="date-expedition-field">
-      <label>
-        <span>選択日</span>
-        <input data-field="event-date" type="date" value="${escapeAttribute(state.selectedDate)}" />
-      </label>
       <label class="expedition-check">
         <input type="checkbox" data-field="event-expedition" ${event.isExpedition ? 'checked' : ''} />
         <span>遠征</span>
+      </label>
+      <label>
+        <span>選択日</span>
+        <input data-field="event-date" type="date" value="${escapeAttribute(state.selectedDate)}" />
       </label>
     </div>
   `;

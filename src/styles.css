@@ -678,7 +678,7 @@ h2 {
 
 .date-expedition-field {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto minmax(180px, 1fr);
   gap: 12px;
   align-items: end;
   grid-column: 1 / -1;
@@ -695,6 +695,7 @@ h2 {
   background: #fff5f3;
   color: #b42318;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .expedition-check input {
@@ -720,7 +721,7 @@ h2 {
 
 @media (max-width: 640px) {
   .date-expedition-field {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
   .expedition-check {
