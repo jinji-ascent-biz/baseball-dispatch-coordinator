@@ -82,6 +82,7 @@ function createEvent(date) {
     title: '週末練習試合',
     date,
     venue: '未定',
+    isExpedition: false,
     responses: Object.fromEntries(state?.players?.map((player) => [player.id, createEmptyResponse()]) ?? defaultPlayers.map((player) => [player.id, createEmptyResponse()])),
   };
 }
@@ -150,6 +151,7 @@ function normalizeEvent(rawEvent, date, players) {
     title: typeof rawEvent?.title === 'string' ? rawEvent.title : '週末練習試合',
     date,
     venue: typeof rawEvent?.venue === 'string' ? rawEvent.venue : '未定',
+    isExpedition: Boolean(rawEvent?.isExpedition),
     responses: Object.fromEntries(
       players.map((player) => [player.id, normalizeResponse(sourceResponses[player.id])]),
     ),
@@ -363,7 +365,7 @@ function dispatchScreenHtml(event, summary) {
       </section>
 
       <section class="event-panel" aria-label="イベント情報">
-        ${textField('event-date', '選択日', state.selectedDate, 'date')}
+        ${dateExpeditionField(event)}
         ${textField('event-title', 'イベント名', event.title)}
         ${textField('event-venue', '会場', event.venue)}
       </section>
@@ -432,14 +434,30 @@ function calendarDaysHtml() {
     const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const hasData = Boolean(state.events[date]);
     const isSelected = date === state.selectedDate;
+    const isExpedition = Boolean(state.events[date]?.isExpedition);
     cells.push(`
-      <button class="calendar-day ${isSelected ? 'selected' : ''} ${hasData ? 'has-data' : ''}" type="button" data-action="select-date" data-date="${date}">
+      <button class="calendar-day ${isSelected ? 'selected' : ''} ${hasData ? 'has-data' : ''} ${isExpedition ? 'expedition-day' : ''}" type="button" data-action="select-date" data-date="${date}">
         <span>${day}</span>
       </button>
     `);
   }
 
   return cells.join('');
+}
+
+function dateExpeditionField(event) {
+  return `
+    <div class="date-expedition-field">
+      <label>
+        <span>選択日</span>
+        <input data-field="event-date" type="date" value="${escapeAttribute(state.selectedDate)}" />
+      </label>
+      <label class="expedition-check">
+        <input type="checkbox" data-field="event-expedition" ${event.isExpedition ? 'checked' : ''} />
+        <span>遠征</span>
+      </label>
+    </div>
+  `;
 }
 
 function textField(field, label, value, type = 'text', placeholder = '') {
@@ -453,7 +471,7 @@ function textField(field, label, value, type = 'text', placeholder = '') {
 
 function summaryMetric(label, key, value) {
   return `
-    <div class="summary-metric">
+    <div class="summary-metric ${key}-metric ${key === 'carCount' && currentEvent().isExpedition ? 'expedition-required' : ''}">
       <span>${label}</span>
       <strong data-summary="${key}">${value}</strong>
     </div>
@@ -565,6 +583,7 @@ function bindEvents() {
 
   document.querySelector('[data-field="event-title"]').addEventListener('input', (event) => updateEvent({ title: event.target.value }, false));
   document.querySelector('[data-field="event-date"]').addEventListener('input', (event) => selectDate(event.target.value));
+  document.querySelector('[data-field="event-expedition"]').addEventListener('change', (event) => updateEvent({ isExpedition: event.target.checked }));
   document.querySelector('[data-field="event-venue"]').addEventListener('input', (event) => updateEvent({ venue: event.target.value }, false));
 
   document.querySelectorAll('[data-action="participation"]').forEach((button) => {
