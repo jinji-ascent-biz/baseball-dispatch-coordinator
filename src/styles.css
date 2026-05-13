@@ -196,7 +196,7 @@ h2 {
   padding: 16px;
 }
 
-.event-panel label:first-child {
+.event-panel > .date-expedition-field {
   grid-column: 1 / -1;
 }
 
@@ -772,5 +772,22 @@ h2 {
 
   .player-list::before {
     padding-top: 6px;
+  }
+}
+
+
+.date-expedition-field > label {
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .date-expedition-field {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+  }
+
+  .date-expedition-field > label {
+    grid-column: auto;
   }
 }
