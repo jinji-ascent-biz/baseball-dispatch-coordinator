@@ -258,44 +258,16 @@ async function loadRemoteState() {
   render();
 }
 
-function postRemoteState() {
-  return new Promise((resolve, reject) => {
-    const iframeName = `dispatchSave_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-    const iframe = document.createElement('iframe');
-    const form = document.createElement('form');
-    const actionInput = document.createElement('input');
-    const stateInput = document.createElement('textarea');
-    const timeout = window.setTimeout(() => {
-      cleanup();
-      reject(new Error('保存がタイムアウトしました'));
-    }, 12000);
+async function postRemoteState() {
+  const body = new URLSearchParams({
+    action: 'save',
+    state: JSON.stringify(state),
+  });
 
-    function cleanup() {
-      window.clearTimeout(timeout);
-      form.remove();
-      iframe.remove();
-    }
-
-    iframe.name = iframeName;
-    iframe.hidden = true;
-    iframe.addEventListener('load', () => {
-      cleanup();
-      resolve();
-    }, { once: true });
-
-    form.method = 'POST';
-    form.action = `${REMOTE_API_URL}?ts=${Date.now()}`;
-    form.target = iframeName;
-    form.hidden = true;
-
-    actionInput.name = 'action';
-    actionInput.value = 'save';
-    stateInput.name = 'state';
-    stateInput.value = JSON.stringify(state);
-
-    form.append(actionInput, stateInput);
-    document.body.append(iframe, form);
-    form.submit();
+  await fetch(`${REMOTE_API_URL}?ts=${Date.now()}`, {
+    method: 'POST',
+    mode: 'no-cors',
+    body,
   });
 }
 
