@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'baseball-dispatch-board:v4';
-const REMOTE_API_URL = 'https://script.google.com/macros/s/AKfycbylMn6eJHB1WVP9ooQSvDIcdqv6JdPSr3xhJQTjFPL8mY8XDBcS_P6giFJKoLj1duls/exec';
+const REMOTE_API_URL = 'https://script.google.com/macros/s/AKfycbzLWkO1EkTW3A7bmALPvehK35Vh42EVeezE2Mz9PipJcmS2YJYEiTUC439IDUm0fMhd/exec';
 const REMOTE_SAVE_DELAY_MS = 700;
 
 const defaultPlayers = [
@@ -258,9 +258,50 @@ async function loadRemoteState() {
   render();
 }
 
+function postRemoteState() {
+  return new Promise((resolve, reject) => {
+    const iframeName = `dispatchSave_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const iframe = document.createElement('iframe');
+    const form = document.createElement('form');
+    const actionInput = document.createElement('input');
+    const stateInput = document.createElement('textarea');
+    const timeout = window.setTimeout(() => {
+      cleanup();
+      reject(new Error('保存がタイムアウトしました'));
+    }, 12000);
+
+    function cleanup() {
+      window.clearTimeout(timeout);
+      form.remove();
+      iframe.remove();
+    }
+
+    iframe.name = iframeName;
+    iframe.hidden = true;
+    iframe.addEventListener('load', () => {
+      cleanup();
+      resolve();
+    }, { once: true });
+
+    form.method = 'POST';
+    form.action = `${REMOTE_API_URL}?ts=${Date.now()}`;
+    form.target = iframeName;
+    form.hidden = true;
+
+    actionInput.name = 'action';
+    actionInput.value = 'save';
+    stateInput.name = 'state';
+    stateInput.value = JSON.stringify(state);
+
+    form.append(actionInput, stateInput);
+    document.body.append(iframe, form);
+    form.submit();
+  });
+}
+
 async function saveRemoteStateNow() {
   try {
-    await remoteJsonp({ action: 'save', state: JSON.stringify(state) });
+    await postRemoteState();
     syncStatus = '同期済み';
   } catch (error) {
     syncStatus = '同期エラー（この端末内に一時保存中）';
