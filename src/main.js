@@ -1,5 +1,6 @@
-const STORAGE_KEY = 'baseball-dispatch-board:v4';
-const REMOTE_API_URL = 'https://script.google.com/macros/s/AKfycbzLWkO1EkTW3A7bmALPvehK35Vh42EVeezE2Mz9PipJcmS2YJYEiTUC439IDUm0fMhd/exec';
+const STORAGE_KEY = 'baseball-dispatch-board:v5';
+const SUPABASE_URL = 'https://oaiurpusixwvmuhvfvtj.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9haXVycHVzaXh3dm11aHZmdnRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3Mjg2NjYsImV4cCI6MjA5NDMwNDY2Nn0.qnasnyh52jGYLg-Gzz3ezmz3AYhNOuUc2t0uGh4alZc';
 const REMOTE_SAVE_DELAY_MS = 700;
 
 const defaultPlayers = [
@@ -211,72 +212,54 @@ function saveBoardState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function remoteJsonp(params) {
-  return new Promise((resolve, reject) => {
-    const callbackName = `dispatchSync_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-    const script = document.createElement('script');
-    const timeout = window.setTimeout(() => {
-      cleanup();
-      reject(new Error('同期がタイムアウトしました'));
-    }, 12000);
-
-    function cleanup() {
-      window.clearTimeout(timeout);
-      delete window[callbackName];
-      script.remove();
-    }
-
-    window[callbackName] = (payload) => {
-      cleanup();
-      resolve(payload);
-    };
-
-    const query = new URLSearchParams({ ...params, callback: callbackName, ts: String(Date.now()) });
-    script.src = `${REMOTE_API_URL}?${query.toString()}`;
-    script.onerror = () => {
-      cleanup();
-      reject(new Error('同期APIに接続できません'));
-    };
-    document.head.appendChild(script);
-  });
+function supabaseHeaders(prefer = '') {
+  const headers = {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+  };
+  if (prefer) headers.Prefer = prefer;
+  return headers;
 }
 
 async function loadRemoteState() {
   try {
-    const data = await remoteJsonp({ action: 'load' });
-    if (data.state) {
-      state = normalizeState(JSON.parse(data.state));
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/dispatch_board_state?id=eq.default&select=state,updated_at`, {
+      headers: supabaseHeaders(),
+      cache: 'no-store',
+    });
+    if (!response.ok) throw new Error(`DB read failed: ${response.status}`);
+    const rows = await response.json();
+    const remoteState = rows[0]?.state;
+    if (remoteState && Object.keys(remoteState).length > 0) {
+      state = normalizeState(remoteState);
       saveBoardState();
     } else {
       await saveRemoteStateNow();
     }
     isRemoteHydrated = true;
-    syncStatus = '同期済み';
+    syncStatus = 'DB同期済み';
   } catch (error) {
-    syncStatus = '同期エラー（この端末内に一時保存中）';
+    syncStatus = 'DB同期エラー（この端末内に一時保存中）';
   }
   render();
 }
 
-async function postRemoteState() {
-  const body = new URLSearchParams({
-    action: 'save',
-    state: JSON.stringify(state),
-  });
-
-  await fetch(`${REMOTE_API_URL}?ts=${Date.now()}`, {
-    method: 'POST',
-    mode: 'no-cors',
-    body,
-  });
-}
-
 async function saveRemoteStateNow() {
   try {
-    await postRemoteState();
-    syncStatus = '同期済み';
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/dispatch_board_state?on_conflict=id`, {
+      method: 'POST',
+      headers: supabaseHeaders('resolution=merge-duplicates'),
+      body: JSON.stringify({
+        id: 'default',
+        state,
+        updated_at: new Date().toISOString(),
+      }),
+    });
+    if (!response.ok) throw new Error(`DB save failed: ${response.status}`);
+    syncStatus = 'DB同期済み';
   } catch (error) {
-    syncStatus = '同期エラー（この端末内に一時保存中）';
+    syncStatus = 'DB同期エラー（この端末内に一時保存中）';
   }
   updateSyncStatus();
 }
@@ -423,7 +406,7 @@ function render() {
         <div>
           <p class="eyebrow">Baseball dispatch board</p>
           <h1>${state.screen === 'players' ? '選手マスタ管理' : '配車調整ボード'}</h1>
-          <p class="sync-status">共有保存: <span data-sync-status>${syncStatus}</span></p>
+          <p class="sync-status">DB保存: <span data-sync-status>${syncStatus}</span></p>
         </div>
         <button class="menu-toggle" type="button" data-action="toggle-menu" aria-label="メニューを開く" aria-expanded="${isMenuOpen}">
           <span></span><span></span><span></span>
