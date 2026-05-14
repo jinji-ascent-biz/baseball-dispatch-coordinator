@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'baseball-dispatch-board:v4';
-const REMOTE_API_URL = 'https://script.google.com/macros/s/AKfycbwEcsgtJT-wBa-bweWNcEArenmWhBZgYRl938cAyLVUiRSG7AXDXq5yeM6UlM1cfNMQ/exec';
+const REMOTE_API_URL = 'https://script.google.com/macros/s/AKfycbylMn6eJHB1WVP9ooQSvDIcdqv6JdPSr3xhJQTjFPL8mY8XDBcS_P6giFJKoLj1duls/exec';
 const REMOTE_SAVE_DELAY_MS = 700;
 
 const defaultPlayers = [
