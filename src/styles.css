@@ -120,6 +120,17 @@ h1 {
   line-height: 1;
 }
 
+.sync-status {
+  margin: 10px 0 0;
+  color: #52645f;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.sync-status span {
+  color: #126a5a;
+}
+
 h2 {
   font-size: 1.08rem;
 }

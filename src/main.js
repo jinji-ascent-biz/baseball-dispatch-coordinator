@@ -1,4 +1,6 @@
-const STORAGE_KEY = 'baseball-dispatch-board:v3';
+const STORAGE_KEY = 'baseball-dispatch-board:v4';
+const REMOTE_API_URL = 'https://script.google.com/macros/s/AKfycbwEcsgtJT-wBa-bweWNcEArenmWhBZgYRl938cAyLVUiRSG7AXDXq5yeM6UlM1cfNMQ/exec';
+const REMOTE_SAVE_DELAY_MS = 700;
 
 const defaultPlayers = [
   { id: 'p01', name: '山田 春陽', grade: '6年 | 1' },
@@ -52,6 +54,9 @@ const weekdayLabels = ['日', '月', '火', '水', '木', '金', '土'];
 
 let state = loadBoardState();
 let isMenuOpen = false;
+let syncStatus = '読み込み中';
+let syncTimer = null;
+let isRemoteHydrated = false;
 
 function todayString() {
   return new Intl.DateTimeFormat('sv-SE', {
@@ -206,6 +211,76 @@ function saveBoardState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+function remoteJsonp(params) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `dispatchSync_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const script = document.createElement('script');
+    const timeout = window.setTimeout(() => {
+      cleanup();
+      reject(new Error('同期がタイムアウトしました'));
+    }, 12000);
+
+    function cleanup() {
+      window.clearTimeout(timeout);
+      delete window[callbackName];
+      script.remove();
+    }
+
+    window[callbackName] = (payload) => {
+      cleanup();
+      resolve(payload);
+    };
+
+    const query = new URLSearchParams({ ...params, callback: callbackName, ts: String(Date.now()) });
+    script.src = `${REMOTE_API_URL}?${query.toString()}`;
+    script.onerror = () => {
+      cleanup();
+      reject(new Error('同期APIに接続できません'));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+async function loadRemoteState() {
+  try {
+    const data = await remoteJsonp({ action: 'load' });
+    if (data.state) {
+      state = normalizeState(JSON.parse(data.state));
+      saveBoardState();
+    } else {
+      await saveRemoteStateNow();
+    }
+    isRemoteHydrated = true;
+    syncStatus = '同期済み';
+  } catch (error) {
+    syncStatus = '同期エラー（この端末内に一時保存中）';
+  }
+  render();
+}
+
+async function saveRemoteStateNow() {
+  try {
+    await remoteJsonp({ action: 'save', state: JSON.stringify(state) });
+    syncStatus = '同期済み';
+  } catch (error) {
+    syncStatus = '同期エラー（この端末内に一時保存中）';
+  }
+  updateSyncStatus();
+}
+
+function queueRemoteSave() {
+  if (!isRemoteHydrated) return;
+  syncStatus = '保存中';
+  updateSyncStatus();
+  window.clearTimeout(syncTimer);
+  syncTimer = window.setTimeout(saveRemoteStateNow, REMOTE_SAVE_DELAY_MS);
+}
+
+function updateSyncStatus() {
+  const element = document.querySelector('[data-sync-status]');
+  if (element) element.textContent = syncStatus;
+}
+
 function currentEvent() {
   if (!state.events[state.selectedDate]) {
     state.events[state.selectedDate] = normalizeEvent({}, state.selectedDate, state.players);
@@ -244,6 +319,7 @@ function summarize() {
 function setState(nextState, shouldRender = true) {
   state = nextState;
   saveBoardState();
+  queueRemoteSave();
   if (shouldRender) render();
 }
 
@@ -334,6 +410,7 @@ function render() {
         <div>
           <p class="eyebrow">Baseball dispatch board</p>
           <h1>${state.screen === 'players' ? '選手マスタ管理' : '配車調整ボード'}</h1>
+          <p class="sync-status">共有保存: <span data-sync-status>${syncStatus}</span></p>
         </div>
         <button class="menu-toggle" type="button" data-action="toggle-menu" aria-label="メニューを開く" aria-expanded="${isMenuOpen}">
           <span></span><span></span><span></span>
@@ -679,3 +756,4 @@ function escapeAttribute(value) {
 }
 
 render();
+loadRemoteState();
