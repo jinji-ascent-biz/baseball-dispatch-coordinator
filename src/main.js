@@ -414,7 +414,6 @@ function render() {
         <div class="header-actions ${isMenuOpen ? 'open' : ''}">
           <button class="ghost-button" type="button" data-action="show-dispatch">配車画面</button>
           <button class="ghost-button" type="button" data-action="show-players">選手管理</button>
-          <button class="ghost-button" type="button" data-action="reset">全データ初期化</button>
         </div>
       </header>
 
@@ -721,14 +720,6 @@ function bindPlayerMasterEvents() {
 }
 
 function bindGlobalEvents() {
-  document.querySelector('[data-action="reset"]').addEventListener('click', () => {
-    isMenuOpen = false;
-    if (!window.confirm('全日付の配車データと選手管理を初期化しますか？')) return;
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem('baseball-dispatch-board:v1');
-    localStorage.removeItem('baseball-dispatch-board:v2');
-    setState(createInitialState());
-  });
 }
 
 function shiftMonth(amount) {
